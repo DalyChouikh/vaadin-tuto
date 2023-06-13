@@ -13,16 +13,31 @@ public class ContactService {
     private final ContactRepository contactRepository;
 
 
-    public List<Contact> getAllContacts(){
-        return contactRepository.findAll();
+    public List<Contact> findAllContacts(String filterText){
+        if(filterText == null || filterText.isEmpty())
+            return contactRepository.findAll();
+        return contactRepository.findContactsByNameContains(filterText);
     }
+
+    public Long countContacts(){
+        return contactRepository.count();
+    }
+
+    public void deleteContact(Contact contact){
+        contactRepository.delete(contact);
+    }
+
+    public void saveContact(Contact contact){
+        if(contact == null){
+            System.err.println("Contact is null");
+            return;
+        }
+        contactRepository.save(contact);
+    }
+
 
     public Contact getContactById(Long id){
         return contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Contact not found"));
-    }
-
-    public List<Contact> findContactsByName(String name) {
-        return contactRepository.findContactsByNameContains(name);
     }
 
     public void removeContact(Long id){

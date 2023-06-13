@@ -10,7 +10,8 @@ import java.util.List;
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, Long> {
 
-    @Query(value = "select s from Contact as s where s.firstName like %:name% or s.lastName like %:name%")
+    @Query(value = "select c from Contact as c where lower(c.firstName) like lower(concat('%', :name, '%'))" +
+            " or lower(c.lastName) like lower(concat('%', :name, '%'))")
     List<Contact> findContactsByNameContains(@Param("name") String name);
 
 
