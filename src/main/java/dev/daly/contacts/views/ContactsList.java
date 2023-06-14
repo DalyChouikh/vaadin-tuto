@@ -3,6 +3,7 @@ package dev.daly.contacts.views;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -71,23 +72,37 @@ public class ContactsList extends VerticalLayout {
     }
 
     private void deleteContact(ContactForm.DeleteEvent event) {
-        contactService.deleteContact(event.getContact());
-        updateList();
-        closeEditor();
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.open();
+        dialog.setHeader(String.format("Delete '%s %s'?",
+                event.getContact().getFirstName(),
+                event.getContact().getLastName()));
+        dialog.setText(
+                "Are you sure you want to permanently delete this contact?");
+        dialog.setCancelable(true);
+        dialog.addCancelListener(close -> dialog.close());
+        dialog.setConfirmText("Delete");
+        dialog.setConfirmButtonTheme("error primary");
+        dialog.addConfirmListener(delete -> {
+            contactService.deleteContact(event.getContact());
+            dialog.close();
+            updateList();
+            closeEditor();
+        });
     }
-
 
     private Component getToolbar() {
         filterText.setPlaceholder("Filter by name...");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
-        
+
         Button addContactButton = new Button("Add contact");
         addContactButton.addClickListener(click -> addContact());
-        
+
         HorizontalLayout toolbar = new HorizontalLayout(filterText, addContactButton);
         toolbar.addClassName("toolbar");
+
         return toolbar;
     }
 
@@ -100,8 +115,13 @@ public class ContactsList extends VerticalLayout {
         contacts.addClassName("contacts-grid");
         contacts.setSizeFull();
         contacts.setColumns("firstName", "lastName", "email", "age", "phone");
+        contacts.addItemDoubleClickListener(event -> editContact(event.getItem()));
+        contacts.addComponentColumn(contact -> {
+            Button editButton = new Button("Edit");
+            editButton.addClickListener(click -> editContact(contact));
+            return editButton;
+        });
         contacts.getColumns().forEach(col -> col.setAutoWidth(true));
-        contacts.asSingleSelect().addValueChangeListener(event -> editContact(event.getValue()));
     }
 
     private void editContact(Contact contact) {

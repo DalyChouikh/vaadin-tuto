@@ -1,15 +1,13 @@
 package dev.daly.contacts.data;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.NumberFormat;
 
 @Entity
 @Table(name = "contacts")
@@ -19,6 +17,8 @@ import org.hibernate.validator.constraints.Length;
 @Setter
 public class Contact {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Email(message = "Email should be valid")
     @NotEmpty(message = "Email is required")
     private String email;
@@ -32,11 +32,14 @@ public class Contact {
     private String lastName;
     @NotEmpty(message = "Age is required")
     @Min(value = 18, message = "Age must be greater than 18")
+    @Max(value = 120, message = "Age must be less than 120")
+    @Pattern(regexp = "[0-9]+", message = "Phone number must be a number")
     @Column(name = "age", nullable = false)
     private String age;
     @NotEmpty(message = "Phone is required")
     @Column(name = "phone", length = 50, nullable = false)
     @Length(min = 8, max = 8, message = "Phone number must be 8 digits")
+    @Pattern(regexp = "[0-9]+", message = "Phone number must be a number")
     private String phone;
 
 }

@@ -13,6 +13,8 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.shared.Registration;
 import dev.daly.contacts.data.Contact;
 
@@ -55,8 +57,11 @@ public class ContactForm extends FormLayout {
     }
 
     private void validateAndSave() {
-        //convert the IntegerField to string
-        if (binder.validate().isOk()) {
+        binder.forField(email)
+                .withValidator(new EmailValidator(
+                        "This doesn't look like a valid email address"))
+                .bind(Contact::getEmail, Contact::setEmail);
+        if (!binder.validate().hasErrors()) {
             fireEvent(new SaveEvent(this, binder.getBean()));
         }
     }
