@@ -30,28 +30,10 @@ public class ContactService {
     public void saveContact(Contact contact){
         if(contact == null){
             System.err.println("Contact is null");
-            return;
+        }else {
+            contactRepository.save(contact);
         }
-        contactRepository.save(contact);
     }
-
-
-    public Contact getContactById(Long id){
-        return contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Contact not found"));
-    }
-
-    public void removeContact(Long id){
-        contactRepository.deleteById(id);
-    }
-
-    public void createContact(String firstName, String lastName, int age, String phone) {
-        contactRepository.save(new Contact(firstName, lastName, age, phone));
-    }
-
-    public void updateContact(Contact contact) {
-        contactRepository.save(contact);
-    }
-
 
 
 }
