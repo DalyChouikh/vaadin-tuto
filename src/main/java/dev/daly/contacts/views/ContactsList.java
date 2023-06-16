@@ -14,10 +14,12 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import dev.daly.contacts.data.Contact;
 import dev.daly.contacts.data.ContactService;
+import jakarta.annotation.security.PermitAll;
 
 
 @PageTitle("Contacts")
 @Route(value = "", layout = MainLayout.class)
+@PermitAll
 public class ContactsList extends VerticalLayout {
     Grid<Contact> contacts = new Grid<>(Contact.class);
     TextField filterText = new TextField();
