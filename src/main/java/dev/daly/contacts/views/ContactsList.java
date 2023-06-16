@@ -17,7 +17,7 @@ import dev.daly.contacts.data.ContactService;
 
 
 @PageTitle("Contacts")
-@Route(value = "contacts")
+@Route(value = "", layout = MainLayout.class)
 public class ContactsList extends VerticalLayout {
     Grid<Contact> contacts = new Grid<>(Contact.class);
     TextField filterText = new TextField();
